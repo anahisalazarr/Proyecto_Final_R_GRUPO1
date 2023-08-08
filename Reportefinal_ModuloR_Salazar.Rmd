@@ -1,0 +1,248 @@
+---
+title: "Reporte_ModuloR_Salazar"
+author: "Salazar Anahí"
+date: "2023-08-07"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(openxlsx)
+balances_2014<-read.xlsx("C:/Users/Anahí Salazar/Desktop/PROYECTO_FINAL_G1/Datos/balances_2014.xlsx")
+```
+
+# Introducción
+
+El presente informe está destinado a exponer los resultados del aprendizaje acerca del uso de herramientas para analizar datos dentro del software R, haciendo uso de una base de datos real proporcionada por los docentes se ejecutará la elaboración de un script para analizar y comparar a las empresas por su tamaño en función de indicadores financieros.
+
+### Objetivos
+
+-Analizar el comportamiento de las empresas registradas en Ecuador en el año 2014.
+
+-Calcular y crear funciones, variables y gráficas según los requerimientos.
+
+-Reconocer variaciones,tendencias y correlaciones entre los indicadores o ratios económicos.
+
+### Descripción de los datos
+
+Dentro de la base originaria de datos propuesta *"balances 2014"* se mantiene un número de 47033 observaciones y 347 variables inicialmente.
+
+El primer paso de codificación a realizarse en este caso, fue la manipulación, selección y creación unicamente de las variables de interes como: empresas, status, tipo de empresa, país, provincia, cantón, ciudad, actividad económica, subactividad, endeudamiento del activo, endeudamiento patrimonial, endeudamiento del activo fijo y apalancamiento. Haciendo uso de las funciones *select(), rename(), mutate()*.
+
+De esta manera la nueva base de datos *Empresas2* tiene 47033 observaciones y 23 variables disponibles para trabajar.
+
+Una vez calculadas las nuevas columnas que definen y muestran los indicadores financieros se pueden analizar y responder las siguientes preguntas planteadas.
+
+### Análisis
+
+1.\*¿El endeudamiento del activo fue mayor en empresas micro y pequeñas vs. grandes?\*
+
+Sí, el endeudamiento del activo se muestra mayor en micro y pequeñas empresas mas que en empresas grandes. *Tabla("Empresas pequeñas vs.Grandes")* Los resultados se muestran a continuación:
+
+-Microempresas y Empresas pequeñas: 6,19
+
+-Grandes empresas: 1,2
+
+2.  **¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de 60 trabajadores directos y que cuenta con 3. 100 a 800 trabajadores administrativos?**
+
+Sí, la liquidez es diferente con respecto a las empresas que tienen más empleados. Según información disponible los indicadores que tienen un índice de menos de 1 (por ejemplo, 0,75) implican que no pueden satisfacer sus pasivos corrientes. En cabio, una relación superior a 1 (por ejemplo, 2,0), indica que puede satisfacer sus facturas actuales.
+
+En este caso podemos observar los siguientes resultados:
+
+```{r liquidez_promedio}
+plot(liquidez_promedio)
+```
+
+En donde,los unicos tipos de empresas con tal cantidad de trabajadores son las anónimas y sucursales extranjeras con un índice de entre 1.95 y 2.59. Posteriormente, observamos a otros tipos de empresas con menor número de empleados e índices mucho mayores indicando mayor liquidez.
+
+```{r liquidez_promedio2}
+plot(liquidez_promedio2)
+```
+
+```{r cars}
+summary(balances_2014)
+```
+
+4.  **Describe el top 10 de empresas con mayor apalancamiento.**
+
+Se determina que las empresas con mayor capacidad de endeudamiento y con mayor porcentaje de rentabilidad y capacidad para invertir son:
+
+```         
+-   Adelca del Litoral
+
+-   Fariball Holding Corp. CA.
+
+-   Hiroaky S.A.
+
+-   Mocanati S.A.
+
+-   Minera El Paraíso S.A.
+
+-   Voith Hydro LTDA.
+
+-   Holding in Ferle Holferle S.A.
+
+-   Terrarium S.A.
+
+-   Ecuadesk S.A
+```
+
+```{r Top 10}
+plot(top10_empresas)
+```
+
+**Tareas Específicas**
+
+**2. Crea una tabla resumiendo el número total de empresas por actividad económica y por actividad económica por cada cantón. La tabla simplemente debe aparecer como un data frame o tibble en tu script.**
+
+```{r echo=FALSE}
+  knitr::kable(num_empresas_por_actividad)
+```
+
+```{r echo=FALSE}
+   knitr::kable(num_empresas_por_actividad_canton)
+```
+
+**3. Gráficamente muestra el comparativo de los indicadores financieros de liquidez y solvencia por Status y provincia.**
+
+```{r liquidez-s-p echo=FALSE}
+ggplot(Liquidez_corriente2, aes(x = Status, y = Liquidez_corriente, fill = Provincia)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Status) +
+    labs(title = "Comparación de Liquidez por Status y Provincia",
+         x = "Status",
+         y = "Liquidez",
+         fill = "Provincia")
+```
+
+```{r echo=FALSE}
+ggplot(Liquidez_corriente2, aes(x = Provincia, y = Liquidez_corriente, fill = Status)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Provincia) +
+    labs(title = "Comparación de Liquidez por Status y Provincia",
+         x = "Provincia",
+         y = "Liquidez",
+         fill = "Status")
+```
+
+**Gráfico de barras de solvencia por status y provincia**
+
+```{r echo=FALSE}
+ggplot(Endeudamiento_Activo2, aes(x = Status, y = Endeudamiento_Activo, fill = Status)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Provincia) +
+    labs(title = "Comparación de Solvencia-Endeudamiento activo por Status y Provincia",
+         y = "Endeudamiento activo",
+         fill = "Status")
+```
+
+**Gráfico filtrado por Provincia-Pichincha**
+
+```{r echo=FALSE}
+ ggplot(empresas_pichincha, aes(x = Status, y = Endeudamiento_Activo)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = "Comparación de Solvencia por Status y Provincia",
+         x = "Status",
+         y = "Solvencia")
+```
+
+**Gráfico Solvencia-Endeudamiento patrimonial**
+
+```{r echo=FALSE}
+ ggplot(Endeudamiento_Patrimonial2, aes(x = Status, y = Endeudamiento_Patrimonial, fill = Status)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Provincia) +
+    labs(title = "Comparación de Solvencia Y endeudamiento patrimonial por Status y Provincia",
+         y = "Endeudamiento patrimonial",
+         fill = "Status")
+```
+
+4.  **Gráfico Solvencia y Endeudamiento Activo fijo**
+
+```{r echo=FALSE}
+ ggplot(Endeudamiento_fijo2, aes(x = Status, y = Endeudamiento_fijo, fill = Status)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Provincia) +
+    labs(title = "Comparación de Solvencia endeudamiento del activo fijo por Status y Provincia",
+         y = "Endeudamiento del activo fijo",
+         fill = "Status")
+```
+
+**Gráfico Solvencia Apalancamiento**
+
+```{r echo=FALSE}
+ggplot(Apalancamiento2, aes(x = Status, y = Apalancamiento, fill = Status)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Provincia) +
+    labs(title = "Comparación de Solvencia Apalancamiento por Status y Provincia",
+         y = "Apalancamiento",
+         fill = "Status")
+```
+
+**Gráfico de barras de liquidez por tipo de empresa**
+
+```{r echo=FALSE}
+ggplot(Liquidez_corriente2, aes(x = Tipo_de_Empresa, y = Liquidez_corriente, fill = Tipo_de_Empresa)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Tipo_de_Empresa) +
+    labs(title = "Comparación de Liquidez por tipo de empresas",
+         y = "Liquidez_corriente",
+         fill = "Tipo de Empresas")
+```
+
+**5. Gráficos de barras de solvencia por tipo de empresa Solvencia-Endeudamiento activo**
+
+```{r echo=FALSE}
+  ggplot(Endeudamiento_Activo2, aes(x = Tipo_de_Empresa, y = Endeudamiento_Activo, fill = Tipo_de_Empresa)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Tipo_de_Empresa) +
+    labs(title = "Comparación de Solvencia endeudamiento activo por Tipo de Empresas",
+         y = "Endeudamiento activo",
+         fill = "Tipo de empresas")
+
+```
+
+**Gráfico Solvencia - Endeudamiento patrimonial**
+
+```{r echo=FALSE}
+ ggplot(Endeudamiento_Patrimonial2, aes(x = Tipo_de_Empresa, y = Endeudamiento_Patrimonial, fill = Tipo_de_Empresa)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Tipo_de_Empresa) +
+    labs(title = "Comparación de Solvencia endeudamiento patrimonial por Tipo de empresas",
+         y = "Endeudamiento patrimonial",
+         fill = "Tipo de empresas")
+```
+
+**Gráfico Solvencia - Endeudamiento activo fijo**
+
+```{r echo=FALSE}
+  ggplot(Endeudamiento_fijo2, aes(x = Tipo_de_Empresa, y = Endeudamiento_fijo, fill = Tipo_de_Empresa)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Tipo_de_Empresa) +
+    labs(title = "Comparación de Solvencia endeudamiento del activo fijo por Tipo de empresas",
+         y = "Endeudamiento del activo fijo",
+         fill = "Tipo de empresas")
+```
+
+**Gráfico Solvencia - Apalancamiento**
+
+```{r echo=FALSE}
+
+  ggplot(Apalancamiento2, aes(x = Tipo_de_Empresa, y = Apalancamiento, fill = Tipo_de_Empresa)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~Tipo_de_Empresa) +
+    labs(title = "Comparación de Solvencia Apalancamiento por Tipo de empresas",
+         y = "Apalancamiento",
+         fill = "Tipo de empresas")
+```
+
+### Conclusiones
+
+Al observar los distintos indicadores se puede concluir que las microempresas y pequeñas empresas son las que más endeudamiento tienen.
+
+Así mismo que la liquidez es diferente con respecto a las empresas que tienen más empleados y que solamente existen un par de tipos de empresas con tal capacidad de contratación y cantidad de trabajadores sieno las anónimas y sucursales extranjeras con un índice de entre 1.95 y 2.59.
+
+Tambien que las provincias con más capacidad de endeudamiento y solvencia según su status son Pichincha, Santo Domingo, Guayas y Manabí.
+
+Es importante reconocer y estudiar de manera más profunda los conceptos e indicadores financieros para obtener una interpretación más adecuada y acertada de resultados.

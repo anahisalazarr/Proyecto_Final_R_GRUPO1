@@ -90,7 +90,7 @@ Empresas_final<- balances_2014 %>% select(nombre_cia,situacion,tipo,tamanio,pais
   
   comparar_empresas <- bind_rows(peq_micro,Grande) %>% view ("Empresas pequeñas vs.Grandes")
   
-  ##se puede insertar un grafico
+
   
   ##2.¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de
   ### 60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?####
