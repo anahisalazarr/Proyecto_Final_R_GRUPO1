@@ -6,6 +6,8 @@ install.packages("tidyverse") #manipulacion y ordenamiento de datos"
 install.packages("magrittr") # operador pipe
 install.packages("readr")
 install.packages("latex")
+install.packages("knitr")
+install.packages("tinytex")
 
 ####ACTIVAR PAQUETES####
 library(tidyverse)
@@ -14,8 +16,8 @@ library(openxlsx)
 library(dplyr)
 library(readxl)
 library(ggplot2)
-library(latex)
-
+library(latexpdf)
+library(knitr)
 ####CARGAR BASE DE DATOS#####
 balances_2014<-read.xlsx("C:/Users/Anahí Salazar/Desktop/PROYECTO_FINAL_G1/Datos/balances_2014.xlsx")
 balances_2014<- tibble(balances_2014)
@@ -86,7 +88,7 @@ Empresas_final<- balances_2014 %>% select(nombre_cia,situacion,tipo,tamanio,pais
   
   peq_micro$Endeudamiento_por_empresa <- sum(peq_micro$Endeudamiento_por_empresa,na.rm=TRUE)
   
-  comparar_empresas <- bind_rows(peq_micro,Grande) %>% view ("Empresas peuqeñas vs.Grandes")
+  comparar_empresas <- bind_rows(peq_micro,Grande) %>% view ("Empresas pequeñas vs.Grandes")
   
   ##se puede insertar un grafico
   
@@ -139,13 +141,6 @@ Empresas_final<- balances_2014 %>% select(nombre_cia,situacion,tipo,tamanio,pais
   
   #Liquidez por status y provincia
   
-  liquidez_status_provincia<- Liquidez_corriente2 %>% select(Status$Activo_corriente,Provincia) %>% view("Status")
-  
-  ggplot(liquidez_status_provincia,aes(x=Provincia, y= Status))+
-    geom_bar(stat = "identity", position = "dodge2") +
-    facet_grid(~Status,Provincia = 4)+ 
-  coord_flip()
-  show.legend= FALSE
   
   # Status
   sta <- ggplot(Liquidez_corriente2, aes(x = Status, y = Liquidez_corriente, fill = Provincia)) +
